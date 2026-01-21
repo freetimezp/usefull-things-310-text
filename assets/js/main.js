@@ -1,13 +1,7 @@
-/* --------------------
-   SPLIT TEXT
--------------------- */
 const text = document.getElementById("text");
 text.innerHTML = [...text.textContent].map((l) => `<span>${l}</span>`).join("");
 const letters = document.querySelectorAll(".shock-text span");
 
-/* --------------------
-PARTICLES
--------------------- */
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 let w, h;
@@ -52,11 +46,19 @@ for (let i = 0; i < 450; i++) {
     particles.push(new Particle());
 }
 
-/* --------------------
-SHOCK EFFECT
--------------------- */
 function shockPulse() {
-    gsap.fromTo(".flash", { opacity: 0 }, { opacity: 1, duration: 0.06, yoyo: true, repeat: 1 });
+    gsap.fromTo(
+        ".flash",
+        {
+            opacity: 0,
+        },
+        {
+            opacity: 1,
+            duration: 0.06,
+            yoyo: true,
+            repeat: 1,
+        }
+    );
 
     particles.forEach((p) => {
         p.vx += (Math.random() - 0.5) * 3.5;
@@ -64,13 +66,10 @@ function shockPulse() {
     });
 
     electricShock();
-    triggerShockwave();
+    triggerShockWave();
 }
 
-/* --------------------
-TEXT ANIMATION
--------------------- */
-const tl = gsap.timeline({ delay: 0.5 });
+const tl = gsap.timeline({ delay: 3.5 });
 
 tl.to(letters, {
     opacity: 1,
@@ -81,7 +80,6 @@ tl.to(letters, {
     stagger: 0.08,
     onStart: shockPulse,
 })
-
     .to(letters, {
         y: () => gsap.utils.random(-20, 20),
         x: () => gsap.utils.random(-10, 10),
@@ -95,7 +93,6 @@ tl.to(letters, {
         },
         onRepeat: shockPulse,
     })
-
     .to(letters, {
         textShadow: "0 0 40px rgba(160,200,255,1)",
         duration: 0.3,
@@ -103,9 +100,6 @@ tl.to(letters, {
         repeat: 1,
     });
 
-/* --------------------
-RANDOM FLICKER
--------------------- */
 gsap.to(letters, {
     opacity: () => gsap.utils.random(0.6, 1),
     duration: 0.05,
@@ -127,9 +121,10 @@ function resizeArcs() {
 resizeArcs();
 window.addEventListener("resize", resizeArcs);
 
-function getLetterCenters() {
+function getLettersCenters() {
     return [...letters].map((l) => {
         const r = l.getBoundingClientRect();
+
         return {
             x: r.left + r.width / 2,
             y: r.top + r.height / 2,
@@ -150,7 +145,7 @@ function drawLightning(a, b) {
     }
 
     arcCtx.lineTo(b.x, b.y);
-    arcCtx.strokeStyle = "rgba(180,220,255,0.9)";
+    arcCtx.strokeStyle = "rgba(180, 220, 255, 0.9)";
     arcCtx.lineWidth = 4;
     arcCtx.shadowBlur = 20;
     arcCtx.shadowColor = "#9fb8ff";
@@ -160,10 +155,11 @@ function drawLightning(a, b) {
 function electricShock() {
     arcCtx.clearRect(0, 0, arcCanvas.width, arcCanvas.height);
 
-    const centers = getLetterCenters();
+    const centers = getLettersCenters();
 
-    for (let i = 0; i < 10; i++) {
-        if (Math.random() > 0.3) continue;
+    for (let i = 0; i < centers.length - 1; i++) {
+        if (Math.random() > 0.7) continue;
+
         drawLightning(centers[i], centers[i + 1]);
     }
 
@@ -180,12 +176,12 @@ function electricShock() {
 let shockRadius = 0;
 let shockActive = false;
 
-function triggerShockwave() {
+function triggerShockWave() {
     shockRadius = 0;
     shockActive = true;
 }
 
-function drawShockwave() {
+function drawShockWave() {
     if (!shockActive) return;
 
     ctx.beginPath();
@@ -209,7 +205,7 @@ function animateParticles() {
         p.draw();
     });
 
-    drawShockwave();
+    drawShockWave();
     requestAnimationFrame(animateParticles);
 }
 
